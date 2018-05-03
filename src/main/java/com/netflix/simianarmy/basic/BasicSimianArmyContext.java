@@ -32,6 +32,7 @@ import com.netflix.simianarmy.MonkeyScheduler;
 import com.netflix.simianarmy.aws.RDSRecorder;
 import com.netflix.simianarmy.aws.STSAssumeRoleSessionCredentialsProvider;
 import com.netflix.simianarmy.aws.SimpleDBRecorder;
+import com.netflix.simianarmy.aws.janitor.DatabaseParameters;
 import com.netflix.simianarmy.client.aws.AWSClient;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -100,6 +101,8 @@ public class BasicSimianArmyContext implements Monkey.Context {
     private final String proxyUsername;
 
     private final String proxyPassword;
+
+    private DatabaseParameters databaseParameters;
 
     /** The key name of the tag owner used to tag resources - across all Monkeys */
     public static String GLOBAL_OWNER_TAGKEY;
@@ -221,7 +224,7 @@ public class BasicSimianArmyContext implements Monkey.Context {
             String dbUrl = configuration().getStr("simianarmy.recorder.db.url");
             String dbTable = configuration().getStr("simianarmy.recorder.db.table");
             
-            RDSRecorder rdsRecorder = new RDSRecorder(dbDriver, dbUser, dbPass, dbUrl, dbTable, client.region());
+            RDSRecorder rdsRecorder = new RDSRecorder(databaseParameters, dbTable, client.region());
             rdsRecorder.init();
             setRecorder(rdsRecorder);        	
         } else if (recorderClass == null || recorderClass.equals(SimpleDBRecorder.class)) {

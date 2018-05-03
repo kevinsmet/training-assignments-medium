@@ -86,6 +86,8 @@ public class BasicJanitorMonkeyContext extends BasicSimianArmyContext implements
 
     private final int daysBeforeTermination;
 
+    private DatabaseParameters databaseParameters;
+
     /**
      * The constructor.
      */
@@ -108,7 +110,7 @@ public class BasicJanitorMonkeyContext extends BasicSimianArmyContext implements
         if (dbDriver == null) {       
         	janitorResourceTracker = new SimpleDBJanitorResourceTracker(awsClient(), resourceDomain);
         } else {
-        	RDSJanitorResourceTracker rdsTracker = new RDSJanitorResourceTracker(dbDriver, dbUser, dbPass, dbUrl, dbTable);
+        	RDSJanitorResourceTracker rdsTracker = new RDSJanitorResourceTracker(databaseParameters, dbTable);
         	rdsTracker.init();
         	janitorResourceTracker = rdsTracker;
         }

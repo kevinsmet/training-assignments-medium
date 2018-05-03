@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.simianarmy.EventType;
 import com.netflix.simianarmy.MonkeyRecorder;
 import com.netflix.simianarmy.MonkeyType;
+import com.netflix.simianarmy.aws.janitor.DatabaseParameters;
 import com.netflix.simianarmy.basic.BasicRecorderEvent;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -61,18 +62,17 @@ public class RDSRecorder implements MonkeyRecorder {
     public static final String FIELD_EVENT_TYPE = "eventType";
     public static final String FIELD_REGION = "region";
     public static final String FIELD_DATA_JSON = "dataJson";
-        
+
     /**
      * Instantiates a new RDS recorder.
      *
      */
-    public RDSRecorder(String dbDriver, String dbUser,
-			String dbPass, String dbUrl, String dbTable, String region) {
+    public RDSRecorder(DatabaseParameters databaseParameters, String dbTable, String region) {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(dbDriver);
-        dataSource.setJdbcUrl(dbUrl);
-        dataSource.setUsername(dbUser);
-        dataSource.setPassword(dbPass);
+        dataSource.setDriverClassName(databaseParameters.getDbDriver());
+        dataSource.setJdbcUrl(databaseParameters.getDbUrl());
+        dataSource.setUsername(databaseParameters.getDbUser());
+        dataSource.setPassword(databaseParameters.getDbPass());
         dataSource.setMaximumPoolSize(2);
     	this.jdbcTemplate = new JdbcTemplate(dataSource);
     	this.table = dbTable;

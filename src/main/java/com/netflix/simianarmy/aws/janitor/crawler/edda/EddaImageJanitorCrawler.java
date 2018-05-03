@@ -84,6 +84,7 @@ public class EddaImageJanitorCrawler implements JanitorCrawler {
     private static final String IMAGE_ID = "ami-[a-z0-9]{8}";
     private static final Pattern BASE_AMI_ID_PATTERN = Pattern.compile("^.*?base_ami_id=(" + IMAGE_ID + ").*?");
     private static final Pattern ANCESTOR_ID_PATTERN = Pattern.compile("^.*?ancestor_id=(" + IMAGE_ID + ").*?$");
+    private EddaUtils eddaUtils;
 
     /**
      * Instantiates a new basic AMI crawler.
@@ -295,17 +296,7 @@ public class EddaImageJanitorCrawler implements JanitorCrawler {
             resource.setLaunchTime(new Date(creationTime));
         }
 
-        JsonNode tags = jsonNode.get("tags");
-        if (tags == null || !tags.isArray() || tags.size() == 0) {
-            LOGGER.debug(String.format("No tags is found for %s", resource.getId()));
-        } else {
-            for (Iterator<JsonNode> it = tags.getElements(); it.hasNext();) {
-                JsonNode tag = it.next();
-                String key = tag.get("key").getTextValue();
-                String value = tag.get("value").getTextValue();
-                resource.setTag(key, value);
-            }
-        }
+        eddaUtils.setTags(jsonNode, resource);
 
         JsonNode descNode = jsonNode.get("description");
         if (descNode != null && !descNode.isNull()) {
